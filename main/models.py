@@ -38,8 +38,15 @@ class Doctor(models.Model):
 
     )
     specialization = models.CharField(max_length=100, verbose_name='специализация')
+    category = models.ForeignKey(TestCategory, on_delete=models.CASCADE, verbose_name='категория', null=True,
+                                 blank=True)
     price = models.IntegerField(verbose_name='цена', null=True, blank=True)
     visit = models.CharField(max_length=20, choices=VISITS, default=PRIMARY_VISIT, verbose_name='прием')
+
+    class Meta:
+        verbose_name = 'Доктор'
+        verbose_name_plural = 'Доктора'
+        ordering = ('specialization',)
 
 
 

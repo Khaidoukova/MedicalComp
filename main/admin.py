@@ -14,6 +14,7 @@ class LabTestAdmin(admin.ModelAdmin):
     list_filter = ('name', 'price', 'time',)
     search_fields = ()
     list_per_page = 100
+    list_editable = ['price']
 
 
 @admin.register(Doctor)
