@@ -3,8 +3,22 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 
+from cart.forms import CartAddProductForm
 from .forms import LabTestForm, TestCategoryForm, DoctorForm
 from .models import TestCategory, LabTest, Doctor
+
+
+def contacts(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        phone_number = request.POST.get('phone_number')
+        message = request.POST.get('message')
+        print(f"Имя: {name}, Телефон: {phone_number}, Сообщение: {message}")
+    context = {
+        'title': 'Контакты',
+    }
+
+    return render(request, 'main/contacts.html', context)
 
 
 class IndexView(TemplateView):
@@ -24,6 +38,7 @@ class LabTestListView(ListView):
 
 class LabTestDetailView(DetailView):
     model = LabTest
+    cart_labtest_form = CartAddProductForm()
 
 
 class LabTestCreateView(CreateView):
@@ -121,3 +136,5 @@ class DoctorDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = TestCategory
     success_url = reverse_lazy('main:index')
     permission_required = 'main.delete_testcategory'
+
+

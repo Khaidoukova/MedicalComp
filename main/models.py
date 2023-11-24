@@ -20,7 +20,7 @@ class LabTest(models.Model):
     time = models.IntegerField(verbose_name='срок выполнения', null=True, blank=True)
 
     def __str__(self):
-        return f'{self.name}, цена {self.price}, срок выполнения {self.time}'
+        return f'{self.name}'
 
     class Meta:
         verbose_name = 'Анализ'
@@ -29,8 +29,8 @@ class LabTest(models.Model):
 
 
 class Doctor(models.Model):
-    PRIMARY_VISIT = 'primary'
-    SECONDARY_VISIT = 'secondary'
+    PRIMARY_VISIT = 'первичный прием'
+    SECONDARY_VISIT = 'повторный прием'
 
     VISITS = (
         (PRIMARY_VISIT, 'первичный прием'),
@@ -47,6 +47,9 @@ class Doctor(models.Model):
         verbose_name = 'Доктор'
         verbose_name_plural = 'Доктора'
         ordering = ('specialization',)
+
+    def __str__(self):
+        return f'{self.specialization}'
 
 
 
