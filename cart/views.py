@@ -1,32 +1,81 @@
+from decimal import Decimal
+
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.http import require_POST
+
+
 from main.models import LabTest
 from .cart import Cart
-from .forms import CartAddProductForm
+from .models import Cart, CartItem
 
 
-@require_POST
+@login_required()
+def view_cart(request):
+    cart = request.user.cart
+    cart_items = CartItem.objects.filter(cart=cart)
+
+    return render(request, 'cart/cart_list.html', {'cart_items': cart_items})
+
+
+@login_required()
 def cart_add(request, labtest_id):
-    cart = Cart(request)
-    labtest = get_object_or_404(LabTest, id=labtest_id)
-    form = CartAddProductForm(request.POST)
-    if form.is_valid():
-        cd = form.cleaned_data
-        cart.add(labtest=labtest,
-                 quantity=cd['quantity'],
-                 override_quantity=cd['override'])
-    return redirect('cart:cart_detail')
+    labtest = LabTest.objects.get(pk=labtest_id)
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart_item, item_created = CartItem.objects.get_or_create(cart=cart, labtest=labtest)
+    if not item_created:
+        cart_item.quantity += 1
+
+        cart_item.save()
+    return redirect('main:labtest_list')
 
 
-@require_POST
-def cart_remove(request, labtest_id):
-    cart = Cart(request)
-    labtest = get_object_or_404(LabTest, id=labtest_id)
-    cart.remove(labtest)
-    return redirect('cart:cart_detail')
+@login_required()
+def increase_cart_item(request, labtest_id):
+    labtest = LabTest.objects.get(pk=labtest_id)
+    cart = request.user.cart
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, labtest=labtest)
+
+    cart_item.quantity += 1
+
+    cart_item.save()
+
+    return redirect('cart:view_cart')
 
 
-def cart_detail(request):
-    cart = Cart(request)
-    return render(request, 'cart/detail.html', {'cart': cart})
+@login_required()
+def decrease_cart_item(request, labtest_id):
+    labtest = LabTest.objects.get(pk=labtest_id)
+    cart = request.user.cart
+    cart_item = cart.cartitem_set.get(labtest=labtest)
 
+    if cart_item.quantity > 1:
+        cart_item.quantity -= 1
+
+        cart_item.save()
+    else:
+        cart_item.delete()
+
+    return redirect('cart:view_cart')
+
+
+@login_required()
+def fetch_cart_count(request):
+    cart_count = 0
+    if request.user.is_authenticated:
+        cart = request.user.cart
+        cart_count = CartItem.objects.filter(cart=cart).count()
+    return JsonResponse({'cart_count': cart_count})
+
+
+def get_cart_count(request):
+    if request.user.is_authenticated:
+        cart_items = CartItem.objects.filter(cart=request.user.cart)
+        cart_count = cart_items.count()
+    else:
+        cart_count = 0
+    return cart_count
+
+
+def get_total_price(self):
+    return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())

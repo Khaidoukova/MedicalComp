@@ -3,7 +3,6 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 
-from cart.forms import CartAddProductForm
 from .forms import LabTestForm, TestCategoryForm, DoctorForm
 from .models import TestCategory, LabTest, Doctor
 
@@ -35,10 +34,14 @@ class IndexView(TemplateView):
 class LabTestListView(ListView):
     model = LabTest
 
+    def get_queryset(self):
+        labtests = LabTest.objects.all()
+        return labtests
+
 
 class LabTestDetailView(DetailView):
     model = LabTest
-    cart_labtest_form = CartAddProductForm()
+    #cart_labtest_form = CartAddProductForm
 
 
 class LabTestCreateView(CreateView):

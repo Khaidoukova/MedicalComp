@@ -1,4 +1,7 @@
 from django.db import models
+from django.urls import reverse
+
+from users.models import User
 
 
 class TestCategory(models.Model):
@@ -27,6 +30,10 @@ class LabTest(models.Model):
         verbose_name_plural = 'Анализы'
         ordering = ('name',)
 
+    def get_absolute_url(self):
+        return reverse('main:labtest_detail',
+                       args=self.pk)
+
 
 class Doctor(models.Model):
     PRIMARY_VISIT = 'первичный прием'
@@ -51,9 +58,9 @@ class Doctor(models.Model):
     def __str__(self):
         return f'{self.specialization}'
 
-
-
-
+    def get_absolute_url(self):
+        return reverse('main:doctor_detail',
+                       args=self.pk)
 
 
 

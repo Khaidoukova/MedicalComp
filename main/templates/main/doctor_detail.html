@@ -11,21 +11,16 @@
 
             <!-- Правая часть с информацией о товаре -->
             <div class="col-md-8">
-                <h2>{{ labtest.name }}</h2>
-                <p>Описание товара: {{ labtest.description }}</p>
-                <p>Цена: {{ labtest.price }} руб.</p>
-                <p>Время выполнения: {{ labtest.time }} дн.</p>
+                <h2>{{ doctor.specialization }}</h2>
+                <p>Категория: {{ doctor.category }}</p>
+                <p>Стоимость посещения: {{ doctor.price }} руб.</p>
+                <p>Вид: {{ doctor.time }} дн.</p>
                 <div class="">
-                  <form action="{% url 'cart:cart_add' labtest.id %}" method="post">
-                      {{ cart_product_form }}
-                      {% csrf_token %}
-                      <button class="add-to-cart-btn">Положить в корзину</button>
-                  </form>
 
                         {% if user.is_staff %}
-                <a href="{% url 'main:labtest_update' labtest.id %}"
+                <a href="{% url 'main:doctor_update' doctor.id %}"
                        class="btn btn-sm btn-outline-secondary">Редактировать</a>
-                    <a href="{% url 'main:labtest_delete' labtest.id %}"
+                    <a href="{% url 'main:doctor_delete' doctor.id %}"
                        class="btn btn-sm btn-outline-danger">Удалить</a>
 
                 {% endif %}
@@ -41,3 +36,4 @@
         </div>
     </div>
 {% endblock %}
+

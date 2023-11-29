@@ -13,6 +13,28 @@ class Cart:
             cart = self.session[settings.CART_SESSION_ID] = {}
             self.cart = cart
 
+    def __iter__(self):
+        """
+        Прокрутить товарные позиции корзины в цикле и
+        получить товары из базы данных.
+        """
+        labtest_ids = self.cart.keys()
+        # получить объекты labtest и добавить их в корзину
+        labtests = LabTest.objects.filter(id__in=labtest_ids)
+        cart = self.cart.copy()
+        for labtest in labtests:
+            cart[str(labtest.id)]['labtest'] = labtest
+        for item in cart.values():
+            item['price'] = Decimal(item['price'])
+            item['total_price'] = item['price'] * item['quantity']
+            yield item
+
+    def __len__(self):
+        """
+        Подсчитать все товарные позиции в корзине.
+        """
+        return sum(item['quantity'] for item in self.cart.values())
+
     def add(self, labtest, quantity=1, override_quantity=False):
         """
         Добавить товар в корзину либо обновить его количество.
@@ -28,8 +50,7 @@ class Cart:
         self.save()
 
     def save(self):
-        # пометить сеанс как "измененный",
-        # чтобы обеспечить его сохранение
+
         self.session.modified = True
 
     def remove(self, labtest):
@@ -41,28 +62,6 @@ class Cart:
             del self.cart[labtest_id]
         self.save()
 
-    def __iter__(self):
-        """
-        Прокрутить товарные позиции корзины в цикле и
-        получить товары из базы данных.
-        """
-        labtest_ids = self.cart.keys()
-        # получить объекты labtest и добавить их в корзину
-        labtests = LabTest.objects.filter(id__in=labtest_ids)
-        cart = self.cart.copy()
-        for labtest in labtests:
-            cart[str(labtest.id)]['product'] = labtest
-        for item in cart.values():
-            item['price'] = Decimal(item['price'])
-            item['total_price'] = item['price'] * item['quantity']
-            yield item
-
-    def __len__(self):
-        """
-        Подсчитать все товарные позиции в корзине.
-        """
-        return sum(item['quantity'] for item in self.cart.values())
-
     def get_total_price(self):
         return sum(Decimal(item['price']) * item['quantity']
                    for item in self.cart.values())
@@ -71,4 +70,3 @@ class Cart:
         # удалить корзину из сеанса
         del self.session[settings.CART_SESSION_ID]
         self.save()
-
