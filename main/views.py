@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+from django.core.mail import send_mail
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
@@ -12,7 +13,14 @@ def contacts(request):
         name = request.POST.get('name')
         phone_number = request.POST.get('phone_number')
         message = request.POST.get('message')
-        print(f"Имя: {name}, Телефон: {phone_number}, Сообщение: {message}")
+
+        send_mail(
+            name,
+            message,
+            phone_number,
+            ['olga@noran.ru'],
+
+        )
     context = {
         'title': 'Контакты',
     }
