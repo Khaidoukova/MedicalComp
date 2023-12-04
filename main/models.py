@@ -32,7 +32,6 @@ class LabTest(models.Model):
         ordering = ('name',)
 
 
-
 class Doctor(models.Model):
     PRIMARY_VISIT = 'первичный прием'
     SECONDARY_VISIT = 'повторный прием'

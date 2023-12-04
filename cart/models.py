@@ -26,6 +26,14 @@ class CartItem(models.Model):
     def __str__(self):
         return f"{self.quantity} x {self.labtest.name}"
 
+    @property
+    def total_sum(self):
+        item = CartItem.objects.get()
+        total = item.price * item.quantity
+        self.total = total
+        return self.total
+
+
 
 
 
