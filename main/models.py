@@ -18,10 +18,15 @@ class TestCategory(models.Model):
 
 class LabTest(models.Model):
     name = models.CharField(max_length=100, verbose_name='название анализа')
-    category = models.ForeignKey(TestCategory, on_delete=models.CASCADE, verbose_name='категория', null=True, blank=True)
-    description = models.TextField(verbose_name='описание', null=True, blank=True)
-    price = models.IntegerField(verbose_name='цена', null=True, blank=True)
-    time = models.IntegerField(verbose_name='срок выполнения', null=True, blank=True)
+    category = models.ForeignKey(TestCategory, on_delete=models.CASCADE,
+                                 verbose_name='категория',
+                                 null=True, blank=True)
+    description = models.TextField(verbose_name='описание',
+                                   null=True, blank=True)
+    price = models.IntegerField(verbose_name='цена',
+                                null=True, blank=True)
+    time = models.IntegerField(verbose_name='срок выполнения',
+                               null=True, blank=True)
 
     def __str__(self):
         return f'{self.name}'
@@ -41,11 +46,12 @@ class Doctor(models.Model):
         (SECONDARY_VISIT, 'повторный прием')
 
     )
-    specialization = models.CharField(max_length=100, verbose_name='специализация')
-    category = models.ForeignKey(TestCategory, on_delete=models.CASCADE, verbose_name='категория', null=True,
+    specialization = models.CharField(max_length=100,
+                                      verbose_name='специализация')
+    category = models.ForeignKey(TestCategory, on_delete=models.CASCADE,
+                                 verbose_name='категория', null=True,
                                  blank=True)
     price = models.IntegerField(verbose_name='цена', null=True, blank=True)
-
 
     class Meta:
         verbose_name = 'Доктор'
@@ -57,7 +63,6 @@ class Doctor(models.Model):
 
 
 class Booking(models.Model):
-
     TIMESLOT_LIST = (
         (0, '09:00 – 09:30'),
         (1, '10:00 – 10:30'),
@@ -70,15 +75,19 @@ class Booking(models.Model):
         (8, '17:00 – 17:30'),
     )
     date = models.DateField(default=timezone.now)
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, verbose_name='')
-    timeslot = models.IntegerField(choices=TIMESLOT_LIST, verbose_name='время приема')
-    is_booked = models.BooleanField(default=False, verbose_name='забронировано')
-    patient = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='пациент',
-                              null=True, blank=True)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE,
+                               verbose_name='')
+    timeslot = models.IntegerField(choices=TIMESLOT_LIST,
+                                   verbose_name='время приема')
+    is_booked = models.BooleanField(default=False,
+                                    verbose_name='забронировано')
+    patient = models.ForeignKey(User, on_delete=models.SET_NULL,
+                                verbose_name='пациент',
+                                null=True, blank=True)
 
     def __str__(self):
-        return f'Доктор:{self.doctor}, пациент {self.patient} время приема {self.timeslot}'
-
+        return (f'Доктор:{self.doctor}, '
+                f'пациент {self.patient} время приема {self.timeslot}')
 
     @property
     def time(self):
@@ -87,4 +96,3 @@ class Booking(models.Model):
     class Meta:
         verbose_name = 'Время приема'
         verbose_name_plural = 'Время приема'
-

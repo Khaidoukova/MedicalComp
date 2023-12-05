@@ -61,7 +61,7 @@ class TestMain(TestCase):
 
 #        self.assertEqual(response.status_code, 302)
 
-#class TestContactForm(TestCase):
+# class TestContactForm(TestCase):
 #    def test_can_send_message(self):
 #        data = {
 #            'name': 'Olga',

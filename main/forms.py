@@ -39,8 +39,9 @@ class BookingForm(StyleFormMixin, forms.ModelForm):
         day = self.cleaned_data['date']
 
         if day <= date.today():
-            raise forms.ValidationError('Date should be upcoming (tomorrow or later)', code='invalid')
-        if day.isoweekday() in (0, 6):
-            raise forms.ValidationError('Date should be a workday', code='invalid')
-
-            return day
+            raise forms.ValidationError(
+                'Выберите, пожалуйста, '
+                'дату в будущем (завтра или позднее)',
+                code='invalid'
+            )
+        return day
