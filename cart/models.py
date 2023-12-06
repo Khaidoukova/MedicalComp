@@ -8,7 +8,7 @@ from users.models import User
 
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='покупатель')
-    products = models.ManyToManyField(LabTest, through='CartItem', verbose_name='анализы')
+    products = models.ManyToManyField(LabTest, through='CartItem', verbose_name='анализы', blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='создана')
 
     def __str__(self):
@@ -26,12 +26,7 @@ class CartItem(models.Model):
     def __str__(self):
         return f"{self.quantity} x {self.labtest.name}"
 
-    @property
-    def total_sum(self):
-        item = CartItem.objects.get()
-        total = item.price * item.quantity
-        self.total = total
-        return self.total
+
 
 
 

@@ -77,7 +77,6 @@ class LabTestUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class LabTestDeleteView(LoginRequiredMixin,
-                        PermissionRequiredMixin,
                         DeleteView):
     model = LabTest
     success_url = reverse_lazy('main:index')

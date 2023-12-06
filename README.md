@@ -13,6 +13,10 @@ BF2
 - django
 - bootstrap
 
-Список зависимостей проекта находится в файле requirements.txt
-
-Для запуска проекта в консоли необходимо ввести команду python manage.py runserver.
+### Для запуска проекта в консоли необходимо:
+- установить все зависимости из файла requirements.txt
+- создать базу данных 'medicalcomp'
+- сделать миграции 
+- создать суперюзера командой python manage.py csu
+- выгрузить тестовые данные из файла data.json в базу данных командой python manage.py loaddata data.json
+- ввести команду python manage.py runserver

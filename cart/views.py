@@ -22,11 +22,17 @@ def view_cart(request):
 def cart_add(request, labtest_id):
     labtest = LabTest.objects.get(pk=labtest_id)
     cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_item, item_created = CartItem.objects.get_or_create(cart=cart, labtest=labtest)
-    if not item_created:
+    try:
+        cart_item = CartItem.objects.get(cart=cart, labtest=labtest)
         cart_item.quantity += 1
-
+        cart_item.total = cart_item.price * cart_item.quantity
         cart_item.save()
+    except CartItem.DoesNotExist:
+        CartItem.objects.create(cart=cart, labtest=labtest, price=labtest.price)
+
+
+
+
     return redirect('main:labtest_list')
 
 
@@ -37,6 +43,8 @@ def increase_cart_item(request, labtest_id):
     cart_item, created = CartItem.objects.get_or_create(cart=cart, labtest=labtest)
 
     cart_item.quantity += 1
+    cart_item.total = cart_item.price * cart_item.quantity
+
 
     cart_item.save()
 
@@ -51,6 +59,8 @@ def decrease_cart_item(request, labtest_id):
 
     if cart_item.quantity > 1:
         cart_item.quantity -= 1
+        cart_item.total = cart_item.price * cart_item.quantity
+
 
         cart_item.save()
     else:

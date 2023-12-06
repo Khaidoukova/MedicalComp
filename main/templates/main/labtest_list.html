@@ -2,7 +2,9 @@
 {% load static %}
 
 {% block content %}
-
+{% if user.is_staff %}
+                <a class="btn btn-outline-primary" href="{% url 'main:labtest_create' %}">Добавить тест</a>
+{% endif %}
 <div class="row mb-2">
     {% for labtest in labtest_list %}
         <div class="col-md-6">
@@ -16,6 +18,7 @@
               <p class="card-text mb-auto">Цена {{ labtest.price }} руб</p>
                 <p class="card-text mb-auto">Срок выполнения {{ labtest.time }} дн.</p>
                 {% if user.is_staff %}
+
                 <a href="{% url 'main:labtest_update' labtest.id %}"
                        class="btn btn-sm btn-outline-secondary">Редактировать</a>
                     <a href="{% url 'main:labtest_delete' labtest.id %}"

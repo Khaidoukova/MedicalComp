@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from main.models import LabTest, TestCategory
+from cart.models import Cart, CartItem
 from users.models import User
 
 
@@ -47,28 +48,20 @@ class TestMain(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'main/doctor_list.html')
 
-#    def test_create_labtest(self):
-#        data = {
-#            'name': 'test1',
+    def test_create_labtest(self):
+        data = {
+            'name': 'test1',
+            'category': self.testcategory,
+            'description': 'test1',
+            'price': 2000,
+            'time': 4,
+        }
+        response = self.client.post(
+            '/labtest_create/',
+            data=data
+        )
 
-#        }
+        self.assertEqual(response.status_code, 200)
 
-#        response = self.client.post(
-#            reverse('main:labtest_create'),
-#            data=data,
 
-#        )
 
-#        self.assertEqual(response.status_code, 302)
-
-# class TestContactForm(TestCase):
-#    def test_can_send_message(self):
-#        data = {
-#            'name': 'Olga',
-#            'phone_number': '123456',
-#            'message': 'test_message',
-
-#        }
-
-#        response = self.client.post('contacts/', data=data)
-#        self.assertContains(response,"test_message")
