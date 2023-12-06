@@ -1,10 +1,35 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
-from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+                                        PermissionRequiredMixin,
+                                        UserPassesTestMixin)
+from django.core.mail import send_mail
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from django.views.generic import (ListView, DetailView,
+                                  CreateView, UpdateView,
+                                  DeleteView, TemplateView)
 
-from .forms import LabTestForm, TestCategoryForm, DoctorForm
-from .models import TestCategory, LabTest, Doctor
+from .forms import LabTestForm, TestCategoryForm, DoctorForm, BookingForm
+from .models import TestCategory, LabTest, Doctor, Booking
+
+
+def contacts(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        phone_number = request.POST.get('phone_number')
+        message = request.POST.get('message')
+
+        send_mail(
+            name,
+            message,
+            phone_number,
+            ['olga@noran.ru'],
+
+        )
+    context = {
+        'title': 'Контакты',
+    }
+
+    return render(request, 'main/contacts.html', context)
 
 
 class IndexView(TemplateView):
@@ -21,9 +46,14 @@ class IndexView(TemplateView):
 class LabTestListView(ListView):
     model = LabTest
 
+    def get_queryset(self):
+        labtests = LabTest.objects.all()
+        return labtests
+
 
 class LabTestDetailView(DetailView):
     model = LabTest
+    # cart_labtest_form = CartAddProductForm
 
 
 class LabTestCreateView(CreateView):
@@ -32,11 +62,10 @@ class LabTestCreateView(CreateView):
     success_url = reverse_lazy('main:index')
 
 
-class LabTestUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
+class LabTestUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = LabTest
     form_class = LabTestForm
     success_url = reverse_lazy('main:index')
-    permission_required = 'main.change_labtest'
 
     def test_func(self):
         user = self.request.user
@@ -47,10 +76,10 @@ class LabTestUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesT
             return False
 
 
-class LabTestDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+class LabTestDeleteView(LoginRequiredMixin,
+                        DeleteView):
     model = LabTest
     success_url = reverse_lazy('main:index')
-    permission_required = 'main.delete_labtest'
 
 
 class TestCategoryListView(ListView):
@@ -67,11 +96,12 @@ class TestCategoryCreateView(CreateView):
     success_url = reverse_lazy('main:index')
 
 
-class TestCategoryUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
+class TestCategoryUpdateView(LoginRequiredMixin,
+                             UserPassesTestMixin,
+                             UpdateView):
     model = TestCategory
     form_class = TestCategoryForm
     success_url = reverse_lazy('main:index')
-    permission_required = 'main.change_testcategory'
 
     def test_func(self):
         user = self.request.user
@@ -82,10 +112,11 @@ class TestCategoryUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UserPa
             return False
 
 
-class TestCategoryDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+class TestCategoryDeleteView(LoginRequiredMixin,
+                             PermissionRequiredMixin,
+                             DeleteView):
     model = TestCategory
     success_url = reverse_lazy('main:index')
-    permission_required = 'main.delete_testcategory'
 
 
 class DoctorListView(ListView):
@@ -93,7 +124,7 @@ class DoctorListView(ListView):
 
 
 class DoctorDetailView(DetailView):
-    model = TestCategory
+    model = Doctor
 
 
 class DoctorCreateView(CreateView):
@@ -102,11 +133,10 @@ class DoctorCreateView(CreateView):
     success_url = reverse_lazy('main:index')
 
 
-class DoctorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
+class DoctorUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Doctor
     form_class = DoctorForm
     success_url = reverse_lazy('main:index')
-    permission_required = 'main.change_doctor'
 
     def test_func(self):
         user = self.request.user
@@ -117,7 +147,24 @@ class DoctorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTe
             return False
 
 
-class DoctorDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+class DoctorDeleteView(LoginRequiredMixin,
+                       PermissionRequiredMixin,
+                       DeleteView):
     model = TestCategory
     success_url = reverse_lazy('main:index')
     permission_required = 'main.delete_testcategory'
+
+
+class BookingCreateView(CreateView):
+    model = Booking
+    form_class = BookingForm
+    success_url = reverse_lazy('main:index')
+
+    # if request.method == 'POST':
+    #    form = BookingForm(request.POST)
+    #    if form.is_valid():
+    #        form.save()
+    #        return redirect('/')
+    # else:
+    #    form = Booking()
+    # return render(request, 'main/booking.html', {'form': form})
