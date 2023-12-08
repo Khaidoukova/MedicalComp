@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-
+<a class="p-2 btn btn-outline-primary" href="{% url 'main:booking_create' %}">Записаться на прием</a>
 <div class="row mb-2">
 
     {% for doctor in doctor_list %}
@@ -32,6 +32,6 @@
           </div>
         </div>
     {% endfor %}
-    <a class="p-2 btn btn-outline-primary" href="{% url 'main:booking_create' %}">Записаться на прием</a>
+
 
 {% endblock %}

@@ -160,11 +160,10 @@ class BookingCreateView(CreateView):
     form_class = BookingForm
     success_url = reverse_lazy('main:index')
 
-    # if request.method == 'POST':
-    #    form = BookingForm(request.POST)
-    #    if form.is_valid():
-    #        form.save()
-    #        return redirect('/')
-    # else:
-    #    form = Booking()
-    # return render(request, 'main/booking.html', {'form': form})
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.patient = self.request.user
+        self.object.save()
+
+        return super().form_valid(form)
+

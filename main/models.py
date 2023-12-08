@@ -1,7 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-
+from django.conf import settings
 from users.models import User
 
 
@@ -74,14 +74,14 @@ class Booking(models.Model):
         (7, '16:00 – 16:30'),
         (8, '17:00 – 17:30'),
     )
-    date = models.DateField(default=timezone.now)
+    date = models.DateField(default=timezone.now, verbose_name='дата')
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE,
-                               verbose_name='')
+                               verbose_name='доктор')
     timeslot = models.IntegerField(choices=TIMESLOT_LIST,
                                    verbose_name='время приема')
     is_booked = models.BooleanField(default=False,
                                     verbose_name='забронировано')
-    patient = models.ForeignKey(User, on_delete=models.SET_NULL,
+    patient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
                                 verbose_name='пациент',
                                 null=True, blank=True)
 
